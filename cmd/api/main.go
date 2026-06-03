@@ -20,7 +20,9 @@ func main() {
 	userRepo := repository.UserRepository{DB: db}
 	artistRepo := repository.ArtistRepository{DB: db}
 	musicRepo := repository.MusicRepository{DB: db}
+	playlistRepo := repository.PlaylistRepository{DB: db}
 	controller.GetUserByID(&userRepo)
 	controller.GetArtistByID(&artistRepo)
 	controller.GetMusicByID(&musicRepo)
+	controller.GetPlaylistByID(&playlistRepo)
 }
