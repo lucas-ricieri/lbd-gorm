@@ -17,7 +17,8 @@ func main() {
 		log.Fatal("Falha ao conectar com o Banco de Dados: ", err)
 	}
 
-	repository := repository.UserRepository{}
-	repository.DB = db
-	controller.GetUserByID(&repository)
+	userRepo := repository.UserRepository{DB: db}
+	artistRepo := repository.ArtistRepository{DB: db}
+	controller.GetUserByID(&userRepo)
+	controller.GetArtistByID(&artistRepo)
 }
