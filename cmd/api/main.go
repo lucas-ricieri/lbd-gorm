@@ -2,23 +2,28 @@ package main
 
 import (
 	"log"
+	"net/http"
 
+	"azevedoruan.github/lbd-gorm/cmd/config"
 	"azevedoruan.github/lbd-gorm/internal/controller"
 	"azevedoruan.github/lbd-gorm/internal/repository"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 func main() {
-	dsn := "host=localhost user=postgres password=admin123 dbname=lbd_trabalho port=5432 sslmode=disable TimeZone=America/Sao_Paulo"
+	db := config.DBSetup()
+	mux := http.NewServeMux()
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Falha ao conectar com o Banco de Dados: ", err)
-	}
-
-	userRepo := repository.UserRepository{DB: db}
 	artistRepo := repository.ArtistRepository{DB: db}
-	controller.GetUserByID(&userRepo)
-	controller.GetArtistByID(&artistRepo)
+	artistContr := controller.ArtistController{Respo: &artistRepo}
+	artistContr.Setup(mux)
+
+	log.Fatal(http.ListenAndServe(":8080", mux))
+
+	//userRepo := repository.UserRepository{DB: db}
+	//musicRepo := repository.MusicRepository{DB: db}
+	//playlistRepo := repository.PlaylistRepository{DB: db}
+	//controller.GetUserByID(&userRepo)
+	//controller.GetArtistByID(&artistRepo)
+	//controller.GetMusicByID(&musicRepo)
+	//controller.GetPlaylistByID(&playlistRepo)
 }
