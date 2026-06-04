@@ -18,6 +18,7 @@ func (e *UserController) Setup(mux *http.ServeMux) {
 	mux.HandleFunc("/usuarios", e.GetAll)
 	mux.HandleFunc("/usuario/create", e.Create)
 	mux.HandleFunc("/usuario/update", e.Update)
+	mux.HandleFunc("/usuario/delete/{id}", e.DeleteById)
 }
 
 func (e *UserController) GetById(w http.ResponseWriter, r *http.Request) {
@@ -100,6 +101,22 @@ func (e *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
+}
+
+func (e *UserController) DeleteById(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Method not allowed. Require DELETE", http.StatusMethodNotAllowed)
+		return
+	}
+	id, err := strconv.ParseUint(r.PathValue("id"), 10, 64)
+	if err != nil {
+		http.Error(w, "Error to get ID", http.StatusBadRequest)
+		return
+	}
+	if err := e.Respo.DeleteById(uint(id)); err != nil {
+		http.Error(w, "Error to delete user "+string(id), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
