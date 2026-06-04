@@ -11,12 +11,11 @@ import (
 
 func main() {
 	db := config.DBSetup()
+	mux := http.NewServeMux()
 
 	artistRepo := repository.ArtistRepository{DB: db}
 	artistContr := controller.ArtistController{Respo: &artistRepo}
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/{id}", artistContr.GetByID)
+	artistContr.Setup(mux)
 
 	log.Fatal(http.ListenAndServe(":8080", mux))
 

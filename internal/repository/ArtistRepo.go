@@ -15,3 +15,9 @@ func (r *ArtistRepository) FindByID(id uint) (models.Artist, error) {
 	err := r.DB.First(&artist, id).Error
 	return artist, err
 }
+
+func (r *ArtistRepository) FindAll() ([]models.Artist, error) {
+	var artists []models.Artist
+	err := r.DB.Find(&artists).Error
+	return artists, err
+}

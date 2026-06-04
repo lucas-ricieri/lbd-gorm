@@ -12,9 +12,9 @@ type ArtistController struct {
 	Respo *repository.ArtistRepository
 }
 
-// Constructor
-func (ArtistController) NewArtistController(respo *repository.ArtistRepository) *ArtistController {
-	return &ArtistController{Respo: respo}
+func (e *ArtistController) Setup(mux *http.ServeMux) {
+	mux.HandleFunc("/artista/{id}", e.GetByID)
+	mux.HandleFunc("/artistas", e.GetAll)
 }
 
 func (e *ArtistController) GetByID(w http.ResponseWriter, r *http.Request) {
@@ -37,4 +37,19 @@ func (e *ArtistController) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(obj)
+}
+
+func (e *ArtistController) GetAll(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusBadRequest)
+		return
+	}
+
+	objs, err := e.Respo.FindAll()
+	if err != nil {
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(objs)
 }
