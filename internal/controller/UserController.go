@@ -17,6 +17,7 @@ func (e *UserController) Setup(mux *http.ServeMux) {
 	mux.HandleFunc("/usuario/{id}", e.GetById)
 	mux.HandleFunc("/usuarios", e.GetAll)
 	mux.HandleFunc("/usuario/create", e.Create)
+	mux.HandleFunc("/usuario/update", e.Update)
 }
 
 func (e *UserController) GetById(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +59,7 @@ func (e *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Header.Get("Content-Type") != "application/json" {
-		http.Error(w, "Content type not allowed. Require JSON.", http.StatusBadRequest)
+		http.Error(w, "Content type not allowed. Require JSON.", http.StatusConflict)
 		return
 	}
 	var newUser models.User
@@ -72,6 +73,33 @@ func (e *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newUser)
+}
+
+func (e *UserController) Update(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method not allowed. Require PUT", http.StatusMethodNotAllowed)
+		return
+	}
+	if r.Header.Get("Content-Type") != "application/json" {
+		http.Error(w, "Content type not allowed. Require JSON.", http.StatusConflict)
+		return
+	}
+	var updatedUser models.User
+	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
+		http.Error(w, "Invalid JSON payload.", http.StatusBadRequest)
+		return
+	}
+	if updatedUser.ID <= 0 {
+		http.Error(w, "The ID is required.", http.StatusBadRequest)
+		return
+	}
+	if err := e.Respo.Update(updatedUser); err != nil {
+		http.Error(w, "Error to update user "+string(updatedUser.ID), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusAccepted)
 }
