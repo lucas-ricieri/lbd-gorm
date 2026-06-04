@@ -22,9 +22,9 @@ func (r *UserRepository) FindAll() ([]models.User, error) {
 	return users, err
 }
 
-func (r *UserRepository) AddNew(newUser models.User) (models.User, error) {
+func (r *UserRepository) AddNew(newUser *models.User) error {
 	result := r.DB.Create(&newUser)
-	return newUser, result.Error
+	return result.Error
 }
 
 func (r *UserRepository) Update(updatedUser models.User) error {
