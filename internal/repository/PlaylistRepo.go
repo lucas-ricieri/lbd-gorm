@@ -21,3 +21,8 @@ func (r *PlaylistRepository) FindAllFromUserId(id uint) ([]models.Playlist, erro
 	err := r.DB.Where("usuario_id = ?", id).Find(&playlists).Error
 	return playlists, err
 }
+
+func (r *PlaylistRepository) AddNewForUser(playlist *models.Playlist) error {
+	result := r.DB.Create(&playlist)
+	return result.Error
+}
