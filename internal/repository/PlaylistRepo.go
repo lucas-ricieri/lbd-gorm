@@ -15,3 +15,9 @@ func (r *PlaylistRepository) FindByID(id uint) (models.Playlist, error) {
 	err := r.DB.Preload("User").Find(&playlist, id).Error
 	return playlist, err
 }
+
+func (r *PlaylistRepository) FindAllFromUserId(id uint) ([]models.Playlist, error) {
+	var playlists []models.Playlist
+	err := r.DB.Where("usuario_id = ?", id).Find(&playlists).Error
+	return playlists, err
+}
