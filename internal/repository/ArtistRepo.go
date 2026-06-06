@@ -21,3 +21,18 @@ func (r *ArtistRepository) FindAll() ([]models.Artist, error) {
 	err := r.DB.Find(&artists).Error
 	return artists, err
 }
+
+func (r *ArtistRepository) AddNew(newArtist *models.Artist) error {
+	result := r.DB.Create(&newArtist)
+	return result.Error
+}
+
+func (r *ArtistRepository) Update(updatedArtist models.Artist) error {
+	err := r.DB.Save(&updatedArtist).Error
+	return err
+}
+
+func (r *ArtistRepository) DeleteById(id uint) error {
+	err := r.DB.Delete(&models.Artist{}, id).Error
+	return err
+}
