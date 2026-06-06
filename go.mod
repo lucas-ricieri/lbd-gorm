@@ -3,7 +3,6 @@ module azevedoruan.github/lbd-gorm
 go 1.26.3
 
 require (
-	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
