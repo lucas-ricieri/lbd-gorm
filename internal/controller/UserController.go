@@ -97,7 +97,7 @@ func (e *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := e.Respo.Update(updatedUser); err != nil {
-		http.Error(w, "Error to update user "+string(updatedUser.ID), http.StatusInternalServerError)
+		http.Error(w, "Error to update user "+strconv.FormatUint(uint64(updatedUser.ID), 10), http.StatusInternalServerError)
 		return
 	}
 
@@ -115,7 +115,7 @@ func (e *UserController) DeleteById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := e.Respo.DeleteById(uint(id)); err != nil {
-		http.Error(w, "Error to delete user "+string(id), http.StatusInternalServerError)
+		http.Error(w, "Error to delete user "+strconv.FormatUint(id, 10), http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
