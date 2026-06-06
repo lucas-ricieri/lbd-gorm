@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	fmt.Println("===== Trabalho de LBD. Grupo 7 =====\nPor Ruan Azevedo e Lucas Ricieri\n")
+	fmt.Println("===== Trabalho de LBD. Grupo 7 =====\nPor Ruan Azevedo e Lucas Ricieri")
 
 	fmt.Println("Starting BD...")
 
@@ -28,15 +28,18 @@ func main() {
 	// Add new repositories here
 	userRepo := repository.UserRepository{DB: db}
 	artistRepo := repository.ArtistRepository{DB: db}
+	musicRepo := repository.MusicRepository{DB: db}
 	playlistRepo := repository.PlaylistRepository{DB: db}
 
 	// Add new controllers here
 	userContr := controller.UserController{Respo: &userRepo}
 	artistContr := controller.ArtistController{Respo: &artistRepo}
+	musicContr := controller.MusicController{Respo: &musicRepo}
 	playlistContr := controller.PlaylistController{Repos: &playlistRepo}
 
 	// Must to setup method in the mux for each controllers
 	artistContr.Setup(mux)
+	musicContr.Setup(mux)
 	userContr.Setup(mux)
 	playlistContr.Setup(mux)
 
