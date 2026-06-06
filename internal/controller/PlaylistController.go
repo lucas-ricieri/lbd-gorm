@@ -16,6 +16,7 @@ type PlaylistController struct {
 func (e *PlaylistController) Setup(mux *http.ServeMux) {
 	mux.HandleFunc("/playlist/usuario/{id}", e.GetAllFromUser)
 	mux.HandleFunc("/playlist/create/usuario/{id}", e.AddNewForUser)
+	mux.HandleFunc("/playlist/{playlist_id}/usuario/{user_id}", e.GetAllMusics)
 }
 
 func (e *PlaylistController) GetAllFromUser(w http.ResponseWriter, r *http.Request) {
@@ -76,4 +77,33 @@ func (e *PlaylistController) AddNewForUser(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newPlaylist)
+}
+
+func (e *PlaylistController) GetAllMusics(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed. Require GET", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Get IDs
+	playlistId, err := strconv.ParseUint(r.PathValue("playlist_id"), 10, 64)
+	if err != nil {
+		http.Error(w, "Error to get Playlist ID", http.StatusBadRequest)
+		return
+	}
+	userId, err := strconv.ParseUint(r.PathValue("user_id"), 10, 64)
+	if err != nil {
+		http.Error(w, "Error to get Playlist ID", http.StatusBadRequest)
+		return
+	}
+
+	obj, err := e.Repos.GetAllMusics(uint(playlistId), uint(userId))
+	if err != nil {
+		http.Error(w, "Could not found. "+err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(obj)
 }

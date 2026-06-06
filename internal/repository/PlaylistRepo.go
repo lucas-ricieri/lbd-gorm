@@ -26,3 +26,25 @@ func (r *PlaylistRepository) AddNewForUser(playlist *models.Playlist) error {
 	result := r.DB.Create(&playlist)
 	return result.Error
 }
+
+func (r *PlaylistRepository) GetAllMusics(playlistId uint, userId uint) (models.Playlist, error) {
+	var playlistWithMusics models.Playlist
+	playlistWithMusics.PlaylistId = playlistId
+	playlistWithMusics.UserId = userId
+	err := r.DB.
+		Preload("User").
+		Preload("MusicPlaylists.Music").
+		Find(&playlistWithMusics).Error
+
+	return playlistWithMusics, err
+}
+
+func (r *PlaylistRepository) AddMusic(musicPlaylist models.MusicPlaylist) (models.MusicPlaylist, error) {
+	// TODO...
+	return models.MusicPlaylist{}, nil
+}
+
+func (r *PlaylistRepository) DeleteMusic(musicPlaylist models.MusicPlaylist) error {
+	// TODO...
+	return nil
+}
