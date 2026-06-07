@@ -14,13 +14,9 @@ func main() {
 
 	fmt.Println("===== Trabalho de LBD. Grupo 7 =====\nPor Ruan Azevedo e Lucas Ricieri")
 
-	fmt.Println("Starting BD...")
+	fmt.Println("\nStarting BD...")
 
 	db := config.DBSetup()
-	if db.Error != nil {
-		log.Fatalf("Error to start BD: %s", db.Error.Error())
-	}
-
 	mux := http.NewServeMux()
 
 	fmt.Println("Starting resources...")

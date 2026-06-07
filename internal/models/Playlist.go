@@ -7,7 +7,10 @@ type Playlist struct {
 	UserId        uint      `gorm:"column:usuario_id;primaryKey"`
 	Name          string    `gorm:"column:nome"`
 	CreactionDate time.Time `gorm:"column:data_criacao"`
-	User          User      `gorm:"foreignKey:UserId"`
+
+	// Preloads
+	User           User            `gorm:"foreignKey:UserId"`
+	MusicPlaylists []MusicPlaylist `gorm:"foreignKey:PlaylistId,UserId"`
 }
 
 func (Playlist) TableName() string {
