@@ -17,10 +17,6 @@ func main() {
 	fmt.Println("\nStarting BD...")
 
 	db := config.DBSetup()
-	if db.Error != nil {
-		log.Fatalf("Error to start BD: %s", db.Error.Error())
-	}
-
 	mux := http.NewServeMux()
 
 	fmt.Println("Starting resources...")
