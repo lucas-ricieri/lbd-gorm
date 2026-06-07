@@ -61,7 +61,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"Name\": \"Xaolim\",\n    \"Email\": \"xaolim@aluno.com\"\n}",
+              "raw": "{\n    \"Name\": \"Ruan Azevedo\",\n    \"Email\": \"razevedo@aluno.com\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -90,7 +90,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"Name\": \"Ruan Azevedo\",\n    \"Email\": \"azevedo@aluno.com\"\n}\n",
+              "raw": "{\n    \"ID\": 3,\n    \"Name\": \"Alex Andre\",\n    \"Email\": \"alexandre@aluno.com\"\n}\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -179,6 +179,196 @@
             }
           },
           "response": []
+        }
+      ]
+    },
+    {
+      "name": "playlist",
+      "item": [
+        {
+          "name": "Playlist - AllFromUser",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/playlist/usuario/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "playlist",
+                "usuario",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Playlist - AddNewForUser",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"Name\": \"As Pop do azevedo\",\n    \"CreactionDate\": \"2026-06-04T12:10:20Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/playlist/create/usuario/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "playlist",
+                "create",
+                "usuario",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Playlist - GetAllMusics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/playlist/1/usuario/3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "playlist",
+                "1",
+                "usuario",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Playlist - AddMusic",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// ladygaga musics id: 7, 8, 9, 10, 11\n// Michael Jackson music id: 12, 13, 14, 15, 16 e 17\n{\n    \"MusicId\": 13,\n    \"PlaylistId\": 2,\n    \"UserId\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/playlist/addmusic",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "playlist",
+                "addmusic"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Playlist - RemoveMusic",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// ladygaga musics id: 7, 8, 9, 10, 11\n// Michael Jackson music id: 12, 13, 14, 15, 16 e 17\n{\n    \"MusicId\": 12,\n    \"PlaylistId\": 2,\n    \"UserId\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/playlist/removemusic",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "playlist",
+                "removemusic"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "artista",
+      "item": [
+        {
+          "name": "Artist - GetById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/artista/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "artista",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Artist - GetAll",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/artistas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "artistas"
+              ]
+            }
+          },
+          "response": []
         },
         {
           "name": "Artist - Create",
@@ -196,7 +386,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"Name\": \"Chico Buarque\",\n    \"Nacionality\": \"Brasileira\"\n}",
+              "raw": "{\n    \"Name\": \"Xico Buarque\",\n    \"Nacionality\": \"Brasileira\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -234,7 +424,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"ID\": 1,\n    \"Name\": \"Chico Buarque\",\n    \"Nacionality\": \"Brasil\"\n}",
+              "raw": "{\n    \"ID\": 5,\n    \"Name\": \"Chico Buarque\",\n    \"Nacionality\": \"Brasil\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -265,7 +455,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/artista/delete/1",
+              "raw": "http://localhost:8080/artista/delete/5",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -274,7 +464,7 @@
               "path": [
                 "artista",
                 "delete",
-                "1"
+                "5"
               ]
             }
           },
@@ -291,7 +481,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/musica/1",
+              "raw": "http://localhost:8080/musica/2",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -299,7 +489,7 @@
               "port": "8080",
               "path": [
                 "musica",
-                "1"
+                "2"
               ]
             }
           },
@@ -343,7 +533,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"Title\": \"Construção\",\n    \"DurationSec\": 380,\n    \"ArtistId\": 1\n}",
+              "raw": "{\n    \"Title\": \"The Bohemia Rapisódias\",\n    \"DurationSec\": 599,\n    \"ArtistId\": 1\n}",
               "options": {
                 "raw": {
                   "language": "json"
