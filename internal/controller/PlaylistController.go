@@ -9,8 +9,18 @@ import (
 	"azevedoruan.github/lbd-gorm/internal/repository"
 )
 
+type UserFinder interface {
+	FindByID(id uint) (models.User, error)
+}
+
+type MusicFinder interface {
+	FindByID(id uint) (models.Music, error)
+}
+
 type PlaylistController struct {
-	Repos *repository.PlaylistRepository
+	Repos       *repository.PlaylistRepository
+	UserFinder  UserFinder
+	MusicFinder MusicFinder
 }
 
 func (e *PlaylistController) Setup(mux *http.ServeMux) {
@@ -31,6 +41,15 @@ func (e *PlaylistController) GetAllFromUser(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Error to get user ID", http.StatusBadRequest)
 		return
 	}
+
+	// START SERVICE
+	// Verifica se User existe
+	user, err := e.UserFinder.FindByID(uint(id))
+	if err != nil || user.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(id), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// END
 
 	objs, err := e.Repos.FindAllFromUserId(uint(id))
 	if err != nil {
@@ -72,6 +91,15 @@ func (e *PlaylistController) AddNewForUser(w http.ResponseWriter, r *http.Reques
 
 	newPlaylist.UserId = uint(id)
 
+	// START SERVICE
+	// Verifica se User existe
+	user, err := e.UserFinder.FindByID(uint(id))
+	if err != nil || user.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(id), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// END
+
 	if err := e.Repos.AddNewForUser(&newPlaylist); err != nil {
 		http.Error(w, "Error to create playlist: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -100,6 +128,22 @@ func (e *PlaylistController) GetAllMusics(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	// START SERVICE
+	// Verifica se Playlist existe
+	playlist, err := e.Repos.FindByID(uint(playlistId))
+	if err != nil || playlist.PlaylistId == 0 {
+		http.Error(w, "Could not found Playlist with ID "+strconv.FormatUint(uint64(playlistId), 10)+".", http.StatusBadRequest)
+		return
+	}
+
+	// Verifica se User existe
+	user, err := e.UserFinder.FindByID(uint(userId))
+	if err != nil || user.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(userId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// END
+
 	obj, err := e.Repos.GetAllMusics(uint(playlistId), uint(userId))
 	if err != nil {
 		http.Error(w, "Could not found. "+err.Error(), http.StatusNotFound)
@@ -126,7 +170,39 @@ func (e *PlaylistController) AddMusic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// START SERVICE - define a ordem na playlist
+	// START SERVICE
+	// Verifica se IDs existe
+	if newMusic.MusicId <= 0 {
+		http.Error(w, "The Music ID is required.", http.StatusBadRequest)
+		return
+	}
+	if newMusic.PlaylistId <= 0 {
+		http.Error(w, "The Playlist ID is required.", http.StatusBadRequest)
+		return
+	}
+	if newMusic.UserId <= 0 {
+		http.Error(w, "The User ID is required.", http.StatusBadRequest)
+		return
+	}
+	// Verifica se music existe
+	music, err := e.MusicFinder.FindByID(uint(newMusic.MusicId))
+	if err != nil || music.ID == 0 {
+		http.Error(w, "Could not found Music with ID "+strconv.FormatUint(uint64(newMusic.MusicId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// Verifica se Playlist existe
+	playlist, err := e.Repos.FindByID(uint(newMusic.PlaylistId))
+	if err != nil || playlist.PlaylistId == 0 {
+		http.Error(w, "Could not found Playlist with ID "+strconv.FormatUint(uint64(newMusic.PlaylistId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// Verifica se User existe
+	artist, err := e.UserFinder.FindByID(uint(newMusic.UserId))
+	if err != nil || artist.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(newMusic.UserId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// define a ordem na playlist
 	obj, err := e.Repos.GetLastSortedMusic(newMusic.PlaylistId, newMusic.UserId)
 	if err != nil {
 		http.Error(w, "Error to get the last music in the playlist: "+err.Error(), http.StatusBadRequest)
