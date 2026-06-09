@@ -30,7 +30,7 @@ func main() {
 	// Add new controllers here
 	userContr := controller.UserController{Respo: &userRepo}
 	artistContr := controller.ArtistController{Respo: &artistRepo}
-	musicContr := controller.MusicController{Respo: &musicRepo}
+	musicContr := controller.MusicController{Respo: &musicRepo, ArtistFinder: &artistRepo}
 	playlistContr := controller.PlaylistController{Repos: &playlistRepo}
 
 	// Must to setup method in the mux for each controllers
