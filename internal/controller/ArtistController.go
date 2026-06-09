@@ -96,10 +96,19 @@ func (e *ArtistController) Update(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid JSON payload.", http.StatusBadRequest)
 		return
 	}
+
+	// START SERVICE - Verifica se artista existe
 	if updatedArtist.ID <= 0 {
 		http.Error(w, "The ID is required.", http.StatusBadRequest)
 		return
 	}
+	obj, err := e.Respo.FindByID(uint(updatedArtist.ID))
+	if err != nil || obj.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(updatedArtist.ID), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// END
+
 	if err := e.Respo.Update(updatedArtist); err != nil {
 		http.Error(w, "Error to update artist "+strconv.FormatUint(uint64(updatedArtist.ID), 10), http.StatusInternalServerError)
 		return
@@ -118,6 +127,15 @@ func (e *ArtistController) DeleteById(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error to get ID", http.StatusBadRequest)
 		return
 	}
+
+	// START SERVICE - Verifica se usuário existe
+	obj, err := e.Respo.FindByID(uint(id))
+	if err != nil || obj.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(id), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// END
+
 	if err := e.Respo.DeleteById(uint(id)); err != nil {
 		http.Error(w, "Error to delete artist "+strconv.FormatUint(id, 10), http.StatusInternalServerError)
 		return
