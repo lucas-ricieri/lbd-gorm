@@ -96,6 +96,15 @@ func (e *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "The ID is required.", http.StatusBadRequest)
 		return
 	}
+
+	// START SERVICE - Verifica se usuário existe
+	obj, err := e.Respo.FindByID(updatedUser.ID)
+	if err != nil || obj.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(updatedUser.ID), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// END
+
 	if err := e.Respo.Update(updatedUser); err != nil {
 		http.Error(w, "Error to update user "+strconv.FormatUint(uint64(updatedUser.ID), 10), http.StatusInternalServerError)
 		return
