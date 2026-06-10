@@ -58,3 +58,13 @@ func (r *PlaylistRepository) GetLastSortedMusic(playlistId uint, userId uint) (m
 
 	return obj, err
 }
+
+func (r *PlaylistRepository) Update(newPlaylist *models.Playlist) error {
+	err := r.DB.Save(&newPlaylist).Error
+	return err
+}
+
+func (r *PlaylistRepository) Delete(playlistToDel *models.Playlist) error {
+	err := r.DB.Select("MusicPlaylists").Delete(&playlistToDel).Error
+	return err
+}

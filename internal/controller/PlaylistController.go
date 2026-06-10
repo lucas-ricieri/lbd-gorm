@@ -24,14 +24,16 @@ type PlaylistController struct {
 }
 
 func (e *PlaylistController) Setup(mux *http.ServeMux) {
-	mux.HandleFunc("/playlist/usuario/{id}", e.GetAllFromUser)
-	mux.HandleFunc("/playlist/create/usuario/{id}", e.AddNewForUser)
-	mux.HandleFunc("/playlist/{playlist_id}/usuario/{user_id}", e.GetAllMusics)
+	mux.HandleFunc("/playlist/usuario/{id}", e.GetAll)
+	mux.HandleFunc("/playlist/{playlist_id}/usuario/{user_id}", e.GetById)
+	mux.HandleFunc("/playlist/create/usuario/{id}", e.Create)
+	mux.HandleFunc("/playlist/update", e.Update)
+	mux.HandleFunc("/playlist/delete", e.Delete)
 	mux.HandleFunc("/playlist/addmusic", e.AddMusic)
 	mux.HandleFunc("/playlist/removemusic", e.RemoveMusic)
 }
 
-func (e *PlaylistController) GetAllFromUser(w http.ResponseWriter, r *http.Request) {
+func (e *PlaylistController) GetAll(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed.", http.StatusBadRequest)
 		return
@@ -66,7 +68,7 @@ func (e *PlaylistController) GetAllFromUser(w http.ResponseWriter, r *http.Reque
 	json.NewEncoder(w).Encode(objs)
 }
 
-func (e *PlaylistController) AddNewForUser(w http.ResponseWriter, r *http.Request) {
+func (e *PlaylistController) Create(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed. Require POST", http.StatusMethodNotAllowed)
 		return
@@ -110,7 +112,7 @@ func (e *PlaylistController) AddNewForUser(w http.ResponseWriter, r *http.Reques
 	json.NewEncoder(w).Encode(newPlaylist)
 }
 
-func (e *PlaylistController) GetAllMusics(w http.ResponseWriter, r *http.Request) {
+func (e *PlaylistController) GetById(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed. Require GET", http.StatusMethodNotAllowed)
 		return
@@ -153,6 +155,58 @@ func (e *PlaylistController) GetAllMusics(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(obj)
+}
+
+func (e *PlaylistController) Update(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method not allowed. Require PUT", http.StatusMethodNotAllowed)
+		return
+	}
+	if r.Header.Get("Content-Type") != "application/json" {
+		http.Error(w, "Content type not allowed. Require JSON.", http.StatusBadRequest)
+		return
+	}
+	var playlist models.Playlist
+	if err := json.NewDecoder(r.Body).Decode(&playlist); err != nil {
+		http.Error(w, "Invalid JSON payload. Error: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// START SERVICE
+	// Verifica se IDs existe
+	if playlist.PlaylistId <= 0 {
+		http.Error(w, "The Playlist ID is required.", http.StatusBadRequest)
+		return
+	}
+	if playlist.UserId <= 0 {
+		http.Error(w, "The User ID is required.", http.StatusBadRequest)
+		return
+	}
+	// Verifica se Playlist existe
+	obj, err := e.Repos.FindByID(uint(playlist.PlaylistId))
+	if err != nil || obj.PlaylistId == 0 {
+		http.Error(w, "Could not found Playlist with ID "+strconv.FormatUint(uint64(playlist.PlaylistId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// Verifica se User existe
+	artist, err := e.UserFinder.FindByID(uint(playlist.UserId))
+	if err != nil || artist.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(playlist.UserId), 10)+".", http.StatusBadRequest)
+		return
+	}
+
+	// Não se atualiza data de criacao
+	playlist.CreactionDate = obj.CreactionDate
+	// END
+
+	if err := e.Repos.Update(&playlist); err != nil {
+		http.Error(w, "Could not update playlist.", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(playlist)
 }
 
 func (e *PlaylistController) AddMusic(w http.ResponseWriter, r *http.Request) {
@@ -279,6 +333,53 @@ func (e *PlaylistController) RemoveMusic(w http.ResponseWriter, r *http.Request)
 
 	if err := e.Repos.RemoveMusic(musicToRemove); err != nil {
 		http.Error(w, "Error to remove music from playlist: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (e *PlaylistController) Delete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Method not allowed. Require DELETE", http.StatusMethodNotAllowed)
+		return
+	}
+	if r.Header.Get("Content-Type") != "application/json" {
+		http.Error(w, "Content type not allowed. Require JSON.", http.StatusBadRequest)
+		return
+	}
+	var playlist models.Playlist
+	if err := json.NewDecoder(r.Body).Decode(&playlist); err != nil {
+		http.Error(w, "Invalid JSON payload. Error: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// START SERVICE
+	// Verifica se IDs existe
+	if playlist.PlaylistId <= 0 {
+		http.Error(w, "The Playlist ID is required.", http.StatusBadRequest)
+		return
+	}
+	if playlist.UserId <= 0 {
+		http.Error(w, "The User ID is required.", http.StatusBadRequest)
+		return
+	}
+	// Verifica se Playlist existe
+	obj, err := e.Repos.FindByID(uint(playlist.PlaylistId))
+	if err != nil || obj.PlaylistId == 0 {
+		http.Error(w, "Could not found Playlist with ID "+strconv.FormatUint(uint64(playlist.PlaylistId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// Verifica se User existe
+	artist, err := e.UserFinder.FindByID(uint(playlist.UserId))
+	if err != nil || artist.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(playlist.UserId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// END
+
+	if err := e.Repos.Delete(&playlist); err != nil {
+		http.Error(w, "Could not delete Playlist "+strconv.FormatUint(uint64(playlist.UserId), 10)+".", http.StatusInternalServerError)
 		return
 	}
 
