@@ -10,7 +10,7 @@ type Playlist struct {
 
 	// Preloads
 	User           User            `gorm:"foreignKey:UserId"`
-	MusicPlaylists []MusicPlaylist `gorm:"foreignKey:PlaylistId,UserId"`
+	MusicPlaylists []MusicPlaylist `gorm:"foreignKey:PlaylistId,UserId;OnDelete:CASCADE"`
 }
 
 func (Playlist) TableName() string {
