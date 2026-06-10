@@ -230,28 +230,54 @@ func (e *PlaylistController) RemoveMusic(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "Content type not allowed. Require JSON.", http.StatusBadRequest)
 		return
 	}
-	var newMusic models.MusicPlaylist
-	if err := json.NewDecoder(r.Body).Decode(&newMusic); err != nil {
+	var musicToRemove models.MusicPlaylist
+	if err := json.NewDecoder(r.Body).Decode(&musicToRemove); err != nil {
 		http.Error(w, "Invalid JSON payload. Error: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// START SERVICE Validações
-	if newMusic.MusicId == 0 {
-		http.Error(w, "Music ID is required.", http.StatusBadRequest)
+	// START SERVICE
+	// Verifica se IDs existe
+	if musicToRemove.MusicId <= 0 {
+		http.Error(w, "The Music ID is required.", http.StatusBadRequest)
 		return
 	}
-	if newMusic.PlaylistId == 0 {
-		http.Error(w, "Playlist ID is required.", http.StatusBadRequest)
+	if musicToRemove.PlaylistId <= 0 {
+		http.Error(w, "The Playlist ID is required.", http.StatusBadRequest)
 		return
 	}
-	if newMusic.UserId == 0 {
-		http.Error(w, "User ID is required.", http.StatusBadRequest)
+	if musicToRemove.UserId <= 0 {
+		http.Error(w, "The User ID is required.", http.StatusBadRequest)
 		return
 	}
+	// Verifica se music existe
+	music, err := e.MusicFinder.FindByID(uint(musicToRemove.MusicId))
+	if err != nil || music.ID == 0 {
+		http.Error(w, "Could not found Music with ID "+strconv.FormatUint(uint64(musicToRemove.MusicId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// Verifica se Playlist existe
+	playlist, err := e.Repos.FindByID(uint(musicToRemove.PlaylistId))
+	if err != nil || playlist.PlaylistId == 0 {
+		http.Error(w, "Could not found Playlist with ID "+strconv.FormatUint(uint64(musicToRemove.PlaylistId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// Verifica se User existe
+	artist, err := e.UserFinder.FindByID(uint(musicToRemove.UserId))
+	if err != nil || artist.ID == 0 {
+		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(musicToRemove.UserId), 10)+".", http.StatusBadRequest)
+		return
+	}
+	// define a ordem na playlist
+	obj, err := e.Repos.GetLastSortedMusic(musicToRemove.PlaylistId, musicToRemove.UserId)
+	if err != nil {
+		http.Error(w, "Error to get the last music in the playlist: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	musicToRemove.PlaylistOrder = obj.PlaylistOrder + 1
 	// END
 
-	if err := e.Repos.RemoveMusic(newMusic); err != nil {
+	if err := e.Repos.RemoveMusic(musicToRemove); err != nil {
 		http.Error(w, "Error to remove music from playlist: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
