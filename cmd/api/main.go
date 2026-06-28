@@ -27,24 +27,28 @@ func main() {
 	artistRepo := repository.ArtistRepository{DB: db}
 	musicRepo := repository.MusicRepository{DB: db}
 	playlistRepo := repository.PlaylistRepository{DB: db}
+	relantionshipRepo := repository.RelantionshipRepository{DB: db}
 
 	// Add new services here
 	userService := service.UserService{Repo: &userRepo}
 	artistService := service.ArtistService{Repo: &artistRepo}
 	musicService := service.MusicService{Repo: &musicRepo, ArtistRepo: &artistRepo}
 	playlistService := service.PlaylistService{Repo: &playlistRepo, UserRepo: &userRepo, MusicRepo: &musicRepo}
+	relantionshipService := service.RelantionshipService{Repo: &relantionshipRepo}
 
 	// Add new controllers here
 	userContr := controller.UserController{Service: &userService}
 	artistContr := controller.ArtistController{Service: &artistService}
 	musicContr := controller.MusicController{Service: &musicService}
 	playlistContr := controller.PlaylistController{Service: &playlistService}
+	relantionshipContr := controller.RelantionshipController{Service: &relantionshipService}
 
 	// Must to setup method in the mux for each controllers
 	artistContr.Setup(mux)
 	musicContr.Setup(mux)
 	userContr.Setup(mux)
 	playlistContr.Setup(mux)
+	relantionshipContr.Setup(mux)
 
 	fmt.Println("Starting listen and server...")
 

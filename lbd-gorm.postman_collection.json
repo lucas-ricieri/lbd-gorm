@@ -618,6 +618,111 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "relacionamentos",
+      "item": [
+        {
+          "name": "Relacionamento - Playlists por Usuario",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/relacionamentos/playlists/usuario/Pablo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "relacionamentos",
+                "playlists",
+                "usuario",
+                "Pablo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Relacionamento - Musicas em Playlists por Artista",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/relacionamentos/musicas/usuario/Josue/artista/Queen",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "relacionamentos",
+                "musicas",
+                "usuario",
+                "Josue",
+                "artista",
+                "Queen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Relacionamento - Contagem de Musicas por Playlist",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/relacionamentos/playlists/contagem-musicas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "relacionamentos",
+                "playlists",
+                "contagem-musicas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Relacionamento - Artistas sem Musicas em Playlists",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/relacionamentos/artistas/sem-musicas-playlists",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "relacionamentos",
+                "artistas",
+                "sem-musicas-playlists"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
