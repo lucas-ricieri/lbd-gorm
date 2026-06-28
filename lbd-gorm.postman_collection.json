@@ -723,6 +723,84 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "otimizacoes",
+      "item": [
+        {
+          "name": "Otimizacao - Musica com Artista",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/otimizacoes/musica/1/artista",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "otimizacoes",
+                "musica",
+                "1",
+                "artista"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Otimizacao - Tempo Total por Playlist",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/otimizacoes/playlists/tempo-total",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "otimizacoes",
+                "playlists",
+                "tempo-total"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Otimizacao - Musicas Menores que Media do Artista",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/otimizacoes/musicas/menores-que-media-artista",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "otimizacoes",
+                "musicas",
+                "menores-que-media-artista"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
