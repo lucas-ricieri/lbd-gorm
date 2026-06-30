@@ -8,6 +8,7 @@ import (
 	"azevedoruan.github/lbd-gorm/cmd/config"
 	"azevedoruan.github/lbd-gorm/internal/controller"
 	"azevedoruan.github/lbd-gorm/internal/repository"
+	"azevedoruan.github/lbd-gorm/internal/service"
 )
 
 func main() {
@@ -26,18 +27,32 @@ func main() {
 	artistRepo := repository.ArtistRepository{DB: db}
 	musicRepo := repository.MusicRepository{DB: db}
 	playlistRepo := repository.PlaylistRepository{DB: db}
+	relantionshipRepo := repository.RelantionshipRepository{DB: db}
+	otimizationDetailRepo := repository.OtimizationDetailRepository{DB: db}
+
+	// Add new services here
+	userService := service.UserService{Repo: &userRepo}
+	artistService := service.ArtistService{Repo: &artistRepo}
+	musicService := service.MusicService{Repo: &musicRepo, ArtistRepo: &artistRepo}
+	playlistService := service.PlaylistService{Repo: &playlistRepo, UserRepo: &userRepo, MusicRepo: &musicRepo}
+	relantionshipService := service.RelantionshipService{Repo: &relantionshipRepo}
+	otimizationDetailService := service.OtimizationDetailService{Repo: &otimizationDetailRepo}
 
 	// Add new controllers here
-	userContr := controller.UserController{Respo: &userRepo}
-	artistContr := controller.ArtistController{Respo: &artistRepo}
-	musicContr := controller.MusicController{Respo: &musicRepo, ArtistFinder: &artistRepo}
-	playlistContr := controller.PlaylistController{Repos: &playlistRepo, UserFinder: &userRepo, MusicFinder: &musicRepo}
+	userContr := controller.UserController{Service: &userService}
+	artistContr := controller.ArtistController{Service: &artistService}
+	musicContr := controller.MusicController{Service: &musicService}
+	playlistContr := controller.PlaylistController{Service: &playlistService}
+	relantionshipContr := controller.RelantionshipController{Service: &relantionshipService}
+	otimizationDetailContr := controller.OtimizationDetailController{Service: &otimizationDetailService}
 
 	// Must to setup method in the mux for each controllers
 	artistContr.Setup(mux)
 	musicContr.Setup(mux)
 	userContr.Setup(mux)
 	playlistContr.Setup(mux)
+	relantionshipContr.Setup(mux)
+	otimizationDetailContr.Setup(mux)
 
 	fmt.Println("Starting listen and server...")
 

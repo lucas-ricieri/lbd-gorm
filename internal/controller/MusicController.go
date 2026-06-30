@@ -6,16 +6,11 @@ import (
 	"strconv"
 
 	"azevedoruan.github/lbd-gorm/internal/models"
-	"azevedoruan.github/lbd-gorm/internal/repository"
+	"azevedoruan.github/lbd-gorm/internal/service"
 )
 
-type ArtistFinder interface {
-	FindByID(id uint) (models.Artist, error)
-}
-
 type MusicController struct {
-	Respo        *repository.MusicRepository
-	ArtistFinder ArtistFinder
+	Service *service.MusicService
 }
 
 func (e *MusicController) Setup(mux *http.ServeMux) {
@@ -36,7 +31,7 @@ func (e *MusicController) GetById(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error to get ID", http.StatusBadRequest)
 		return
 	}
-	obj, err := e.Respo.FindByID(uint(id))
+	obj, err := e.Service.FindByID(uint(id))
 	if err != nil {
 		http.Error(w, "Music not found", http.StatusNotFound)
 		return
@@ -51,7 +46,7 @@ func (e *MusicController) GetAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed. Require GET", http.StatusBadRequest)
 		return
 	}
-	objs, err := e.Respo.FindAll()
+	objs, err := e.Service.FindAll()
 	if err != nil {
 		return
 	}
@@ -75,16 +70,8 @@ func (e *MusicController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// START SERVICE - Verifica se artista existe
-	obj, err := e.ArtistFinder.FindByID(uint(newMusic.ArtistId))
-	if err != nil || obj.ID == 0 {
-		http.Error(w, "Could not found Artist with ID "+strconv.FormatUint(uint64(newMusic.ArtistId), 10)+".", http.StatusBadRequest)
-		return
-	}
-	// END
-
-	if err := e.Respo.AddNew(&newMusic); err != nil {
-		http.Error(w, "Error to create music.", http.StatusInternalServerError)
+	if err := e.Service.Create(&newMusic); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -108,32 +95,8 @@ func (e *MusicController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// START SERVICE
-	// Verifica se IDs existe
-	if updatedMusic.ID <= 0 {
-		http.Error(w, "The ID is required.", http.StatusBadRequest)
-		return
-	}
-	if updatedMusic.ArtistId <= 0 {
-		http.Error(w, "The Artist ID is required.", http.StatusBadRequest)
-		return
-	}
-	// Verifica se music existe
-	music, err := e.Respo.FindByID(uint(updatedMusic.ID))
-	if err != nil || music.ID == 0 {
-		http.Error(w, "Could not found Music with ID "+strconv.FormatUint(uint64(updatedMusic.ID), 10)+".", http.StatusBadRequest)
-		return
-	}
-	// Verifica se artist existe
-	artist, err := e.ArtistFinder.FindByID(uint(updatedMusic.ArtistId))
-	if err != nil || artist.ID == 0 {
-		http.Error(w, "Could not found Artist with ID "+strconv.FormatUint(uint64(updatedMusic.ArtistId), 10)+".", http.StatusBadRequest)
-		return
-	}
-	// END
-
-	if err := e.Respo.Update(updatedMusic); err != nil {
-		http.Error(w, "Error to update music "+strconv.FormatUint(uint64(updatedMusic.ID), 10), http.StatusInternalServerError)
+	if err := e.Service.Update(updatedMusic); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -151,17 +114,8 @@ func (e *MusicController) DeleteById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// START SERVICE
-	// Verifica se music existe
-	music, err := e.Respo.FindByID(uint(id))
-	if err != nil || music.ID == 0 {
-		http.Error(w, "Could not found Music with ID "+strconv.FormatUint(uint64(id), 10)+".", http.StatusBadRequest)
-		return
-	}
-	// END
-
-	if err := e.Respo.DeleteById(uint(id)); err != nil {
-		http.Error(w, "Error to delete music "+strconv.FormatUint(id, 10), http.StatusInternalServerError)
+	if err := e.Service.DeleteByID(uint(id)); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	w.WriteHeader(http.StatusOK)

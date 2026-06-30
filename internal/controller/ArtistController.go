@@ -6,11 +6,11 @@ import (
 	"strconv"
 
 	"azevedoruan.github/lbd-gorm/internal/models"
-	"azevedoruan.github/lbd-gorm/internal/repository"
+	"azevedoruan.github/lbd-gorm/internal/service"
 )
 
 type ArtistController struct {
-	Respo *repository.ArtistRepository
+	Service *service.ArtistService
 }
 
 func (e *ArtistController) Setup(mux *http.ServeMux) {
@@ -33,7 +33,7 @@ func (e *ArtistController) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	obj, err := e.Respo.FindByID(uint(id))
+	obj, err := e.Service.FindByID(uint(id))
 	if err != nil {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
@@ -49,7 +49,7 @@ func (e *ArtistController) GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	objs, err := e.Respo.FindAll()
+	objs, err := e.Service.FindAll()
 	if err != nil {
 		return
 	}
@@ -72,7 +72,7 @@ func (e *ArtistController) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid JSON payload.", http.StatusBadRequest)
 		return
 	}
-	if err := e.Respo.AddNew(&newArtist); err != nil {
+	if err := e.Service.Create(&newArtist); err != nil {
 		http.Error(w, "Error to create artist.", http.StatusInternalServerError)
 		return
 	}
@@ -97,20 +97,8 @@ func (e *ArtistController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// START SERVICE - Verifica se artista existe
-	if updatedArtist.ID <= 0 {
-		http.Error(w, "The ID is required.", http.StatusBadRequest)
-		return
-	}
-	obj, err := e.Respo.FindByID(uint(updatedArtist.ID))
-	if err != nil || obj.ID == 0 {
-		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(updatedArtist.ID), 10)+".", http.StatusBadRequest)
-		return
-	}
-	// END
-
-	if err := e.Respo.Update(updatedArtist); err != nil {
-		http.Error(w, "Error to update artist "+strconv.FormatUint(uint64(updatedArtist.ID), 10), http.StatusInternalServerError)
+	if err := e.Service.Update(updatedArtist); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -128,16 +116,8 @@ func (e *ArtistController) DeleteById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// START SERVICE - Verifica se usuário existe
-	obj, err := e.Respo.FindByID(uint(id))
-	if err != nil || obj.ID == 0 {
-		http.Error(w, "Could not found User with ID "+strconv.FormatUint(uint64(id), 10)+".", http.StatusBadRequest)
-		return
-	}
-	// END
-
-	if err := e.Respo.DeleteById(uint(id)); err != nil {
-		http.Error(w, "Error to delete artist "+strconv.FormatUint(id, 10), http.StatusInternalServerError)
+	if err := e.Service.DeleteByID(uint(id)); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
