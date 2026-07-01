@@ -29,6 +29,9 @@ func main() {
 	playlistRepo := repository.PlaylistRepository{DB: db}
 	relantionshipRepo := repository.RelantionshipRepository{DB: db}
 	otimizationDetailRepo := repository.OtimizationDetailRepository{DB: db}
+	keysJunctionRepo := repository.KeysJunctionRepository{DB: db}
+	functionRepo := repository.FunctionRepository{DB: db}
+	transactionRepo := repository.TransactionRepository{DB: db}
 
 	// Add new services here
 	userService := service.UserService{Repo: &userRepo}
@@ -37,6 +40,9 @@ func main() {
 	playlistService := service.PlaylistService{Repo: &playlistRepo, UserRepo: &userRepo, MusicRepo: &musicRepo}
 	relantionshipService := service.RelantionshipService{Repo: &relantionshipRepo}
 	otimizationDetailService := service.OtimizationDetailService{Repo: &otimizationDetailRepo}
+	keysJunctionService := service.KeysJunctionService{Repo: &keysJunctionRepo}
+	functionService := service.FunctionService{Repo: &functionRepo}
+	transactionService := service.TransactionService{Repo: &transactionRepo}
 
 	// Add new controllers here
 	userContr := controller.UserController{Service: &userService}
@@ -45,6 +51,9 @@ func main() {
 	playlistContr := controller.PlaylistController{Service: &playlistService}
 	relantionshipContr := controller.RelantionshipController{Service: &relantionshipService}
 	otimizationDetailContr := controller.OtimizationDetailController{Service: &otimizationDetailService}
+	keysJunctionContr := controller.KeysJunctionController{Service: &keysJunctionService}
+	functionContr := controller.FunctionController{Service: &functionService}
+	transactionContr := controller.TransactionController{Service: &transactionService}
 
 	// Must to setup method in the mux for each controllers
 	artistContr.Setup(mux)
@@ -53,6 +62,9 @@ func main() {
 	playlistContr.Setup(mux)
 	relantionshipContr.Setup(mux)
 	otimizationDetailContr.Setup(mux)
+	keysJunctionContr.Setup(mux)
+	functionContr.Setup(mux)
+	transactionContr.Setup(mux)
 
 	fmt.Println("Starting listen and server...")
 
