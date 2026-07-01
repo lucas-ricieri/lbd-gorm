@@ -801,6 +801,161 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "chaves-juncao",
+      "item": [
+        {
+          "name": "Chaves Juncao - Musicas da Playlist com Ordem",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/chaves-juncao/playlists/Rock%20do%20Pablo/musicas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "chaves-juncao",
+                "playlists",
+                "Rock do Pablo",
+                "musicas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Chaves Juncao - Dono da Playlist pela Musica",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/chaves-juncao/musicas/Bohemian%20Rhapsody/donos-playlist",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "chaves-juncao",
+                "musicas",
+                "Bohemian Rhapsody",
+                "donos-playlist"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "funcoes",
+      "item": [
+        {
+          "name": "Funcoes - Ranking de Popularidade do Artista",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/funcoes/artistas/ranking-popularidade",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "funcoes",
+                "artistas",
+                "ranking-popularidade"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Funcoes - Musicas Maiores que Maior Musica de Outro Artista",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/funcoes/musicas/artista/Led%20Zeppelin/maiores-que-maior-musica/Queen",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "funcoes",
+                "musicas",
+                "artista",
+                "Led Zeppelin",
+                "maiores-que-maior-musica",
+                "Queen"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "transacoes",
+      "item": [
+        {
+          "name": "Transacao - Transferir Musica entre Playlists",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"MusicId\": 1,\n    \"FromPlaylistId\": 1,\n    \"ToPlaylistId\": 2,\n    \"UserId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/transacoes/musicas/transferir",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "transacoes",
+                "musicas",
+                "transferir"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
